@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Tails</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mini.css/3.0.1/mini-default.min.css">
+    <style media="screen">
+      #gameArea {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      .tail {
+        position: absolute;
+      }
+    </style>
+    <script type="text/javascript">
+      window.onload = function() {
+        tailsGame = new Vue({
+          el:'#tailsGame',
+          data: {
+            tailsClosed: 0,
+            tailsInArea: 0,
+            gameStarted: false,
+            gameCurrLevel: 0,
+            disciplines: ['матану', 'информатике', 'истории', 'экономике',
+             'эконометрике', 'физике', 'русскому', 'введению в профессию',
+             'философии', 'физ-ре', 'дискретной математике', 'сетям',
+             'черчению', 'экологии'],
+            counter: 5
+          },
+          methods: {
+            startGame: function() {
+              this.tailsClosed = 0;
+              this.counter = 5 + (this.gameCurrLevel*15);
+              this.gameStarted = true;
+              this.tailsInArea = 0;
+              this.countDown();
+              this.genItems();
+              document.getElementById("gameArea").innerHTML = '';
+            },
+            countDown: function() {
+              if (this.counter && this.gameStarted) {
+                return setTimeout(() => {
+                  --this.counter
+                  this.countDown()
+                }, 1000)
+              } else {
+                this.gameStarted = false;
+                gameArea = document.getElementById("gameArea");
+                res = "Отлично! Вы выжили в этой сессии!";
+                this.gameCurrLevel++;
+                if(this.tailsInArea > 3) {
+                  res = "К сожалению вы отчислены!";
+                  this.gameCurrLevel = 0;
+                }
+                gameArea.innerHTML = "\
+                <center>\
+                  <h1>"+res+"</h1>\
+                </center>\
+                  ";
+              }
+            },
+            genItems: function() {
+              dis = this.disciplines[this.getRandomInt(0, this.disciplines.length-1)];
+              text = "Закрыть хвост по "+dis;
+              gameArea = document.getElementById("gameArea");
+              //Rand position
+              t = this.getRandomInt(0, 90);
+              l = this.getRandomInt(0, 90);
+              style = "style='left:"+l+"%; top:"+t+"%'";
+              rColors = ['primary', 'secondary', 'tertiary', 'inverse', ''];
+              rColor = rColors[this.getRandomInt(0, 4)];
+              gameArea.innerHTML += "\
+              <button "+style+" class='tail "+rColor+"' onclick='tailsGame.closeThisTail(this)'>"
+                +text+
+              "</button>";
+              this.tailsInArea++;
+
+              min_t = 500-(this.tailsClosed*2);
+              max_t = 1000-(this.tailsClosed*2);
+
+              //До конца игры
+              end_t = this.counter * 1000
+
+              timeGen = this.getRandomInt(min_t, max_t);
+              if(this.gameStarted && (max_t*2 < end_t)) {
+                return setTimeout(() => {
+                  this.genItems();
+                }, timeGen)
+              }
+            },
+            getRandomInt: function(min, max) {
+              return Math.round(Math.random() * (max - min) + min);
+            },
+            closeThisTail: function(el) {
+              el.remove();
+              this.tailsInArea--;
+              this.tailsClosed++;
+            }
+          }
+        });
+      }
+    </script>
+  </head>
+  <body>
+    <div id="tailsGame">
+      <template v-if="gameStarted">
+        <div class='stat' >
+          <center>
+            <h2>
+              Закрыто хвостов: {{tailsClosed}} До конца сессии: {{counter}}
+            </h2>
+          </center>
+        </div>
+      </template>
+      <template v-else>
+        <center>
+          <button class='primary' v-on:click="startGame()">
+            <h2>Начать сессию</h2>
+          </button>
+        </center>
+      </template>
+      <div id="gameArea"></div>
+    </div>
+  </body>
+</html>
