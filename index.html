@@ -49,10 +49,10 @@
               } else {
                 this.gameStarted = false;
                 gameArea = document.getElementById("gameArea");
-                res = "Отлично! Вы выжили в этой сессии!";
                 this.gameCurrLevel++;
+                res = this.gameCurrLevel != 1?"Отлично! Вы выжили в этой сессии!":"Отлично! Вы поступили в универ!";
                 if(this.tailsInArea > 3) {
-                  res = "К сожалению вы отчислены!";
+                  res = this.gameCurrLevel != 1?"К сожалению, вы отчислены!":"К сожалению, вы не прошли вступительные экзамены!";
                   this.gameCurrLevel = 0;
                 }
                 gameArea.innerHTML = "\
