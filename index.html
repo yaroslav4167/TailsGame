@@ -118,7 +118,8 @@
       <template v-else>
         <center>
           <button class='primary' v-on:click="startGame()">
-            <h2>Начать сессию</h2>
+            <h2 v-if="!gameCurrLevel">Начать вступительные экзамены</h2>
+            <h2 v-else>Начать сессию №{{gameCurrLevel}}</h2>
           </button>
         </center>
       </template>
