@@ -81,8 +81,11 @@
               min_t = 500-(this.tailsClosed*2);
               max_t = 1000-(this.tailsClosed*2);
 
+              min_t = min_t < 80?80:min_t;
+              max_t = max_t < 400?400:max_t;
+
               //До конца игры
-              end_t = this.counter * 1000
+              end_t = this.counter * 1000;
 
               timeGen = this.getRandomInt(min_t, max_t);
               if(this.gameStarted && (max_t*2 < end_t)) {
